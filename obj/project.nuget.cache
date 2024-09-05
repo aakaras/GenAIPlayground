@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "dgSpecHash": "3j2Q26b2WgvE39hOaE+f2EGdEOl8IhJK/LhB7JqJrX5NpnnXBbbmjbxdJEBw9XmnLCx4elG1ot6+60WvZzAxMQ==",
+  "success": true,
+  "projectFilePath": "F:\\Personal\\new\\MyChatApp\\MyChatApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\azure.ai.openai\\2.0.0-beta.5\\azure.ai.openai.2.0.0-beta.5.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\azure.core\\1.42.0\\azure.core.1.42.0.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\azure.identity\\1.12.0\\azure.identity.1.12.0.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\microsoft.identity.client\\4.61.3\\microsoft.identity.client.4.61.3.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\microsoft.identity.client.extensions.msal\\4.61.3\\microsoft.identity.client.extensions.msal.4.61.3.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\microsoft.identitymodel.abstractions\\6.35.0\\microsoft.identitymodel.abstractions.6.35.0.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\openai\\2.0.0-beta.11\\openai.2.0.0-beta.11.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\system.clientmodel\\1.1.0-beta.5\\system.clientmodel.1.1.0-beta.5.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.1\\system.diagnostics.diagnosticsource.6.0.1.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\system.memory.data\\1.0.2\\system.memory.data.1.0.2.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\system.security.cryptography.protecteddata\\4.7.0\\system.security.cryptography.protecteddata.4.7.0.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\system.text.encodings.web\\6.0.0\\system.text.encodings.web.6.0.0.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\system.text.json\\4.7.2\\system.text.json.4.7.2.nupkg.sha512",
+    "C:\\Users\\SOM3JVL\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512"
+  ],
+  "logs": []
+}

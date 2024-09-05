@@ -1,0 +1,38 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to my Chat App</h1>
+</div>
+
+<div>
+    <textarea id="userInput" rows="5" cols="50"></textarea>
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<div id="chatOutput">
+</div>
+
+<script>
+    function sendMessage() {
+        var userInput = document.getElementById("userInput").value;
+        document.getElementById("userInput").value = ""; 
+
+        // Send user input to the server using AJAX (fetch or XMLHttpRequest)
+        fetch('/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain' 
+            },
+            body: userInput
+        })
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("chatOutput").innerHTML += "You: " + userInput + "<br>";
+            document.getElementById("chatOutput").innerHTML += "Bot: " + data + "<br>";
+        });
+    }
+</script>
