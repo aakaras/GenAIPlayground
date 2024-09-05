@@ -19,22 +19,3 @@ steps:
   displayName: 'Restore'
   inputs:
     command: 'restore'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Build'
-  inputs:
-    command: 'build'
-    arguments: '--no-restore'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Publish'
-  inputs:
-    command: 'publish'
-    arguments: '-c Release -o $(publishOutputFolder)'
-
-- task: AzureWebApp@1
-  displayName: 'Azure Web App Deploy: $(webAppName)'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    appName: $(webAppName)
-    package: $(publishOutputFolder)/**/*.zip
