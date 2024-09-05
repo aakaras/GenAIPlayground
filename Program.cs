@@ -51,7 +51,7 @@ app.MapPost("/chat", async (HttpContext context) =>
  options.AddDataSource(new AzureSearchChatDataSource()
  {
      Endpoint = new Uri("https://whoamisearch.search.windows.net"), // Replace with your Azure AI Search endpoint
-     IndexName = "profile", // Replace with your Azure AI Search index name
+     IndexName = "profile2", // Replace with your Azure AI Search index name
      Authentication = DataSourceAuthentication.FromApiKey(GetEnvironmentVariable("SEARCH_KEY")) // Replace with your Azure AI Search admin key
  });
 
@@ -68,11 +68,11 @@ app.MapPost("/chat", async (HttpContext context) =>
  string response = completion.Content[0].Text;
  if (onYourDataContext?.Intent is not null)
  {
-     response += $"\nIntent: {onYourDataContext.Intent}";
+     //response += $"\nIntent: {onYourDataContext.Intent}";
  }
  foreach (AzureChatCitation citation in onYourDataContext?.Citations ?? new List<AzureChatCitation>())
  {
-     response += $"\nCitation: {citation.Content}";
+     //response += $"\nCitation: {citation.Content}";
  }
 
  await context.Response.WriteAsync(response);
