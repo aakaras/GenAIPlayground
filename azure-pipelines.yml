@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest' # Or 'windows-latest' if you prefer
 
 variables:
-  azureSubscription: 'Visual Studio Professional Subscription' # Name in Azure DevOps
+  azureSubscription: 'devops-presentation' # Name in Azure DevOps
   webAppName: 'whoamai-ak' 
   publishOutputFolder: '$(Build.ArtifactStagingDirectory)/publish'
 
