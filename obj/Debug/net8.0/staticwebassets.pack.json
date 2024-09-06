@@ -5,8 +5,16 @@
       "PackagePath": "staticwebassets\\MyChatApp.bundle.scp.css"
     },
     {
+      "Id": "F:\\Personal\\new\\MyChatApp\\wwwroot\\css\\site-old.css",
+      "PackagePath": "staticwebassets\\css\\site-old.css"
+    },
+    {
       "Id": "F:\\Personal\\new\\MyChatApp\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
+      "Id": "F:\\Personal\\new\\MyChatApp\\wwwroot\\css\\styles.css",
+      "PackagePath": "staticwebassets\\css\\styles.css"
     },
     {
       "Id": "F:\\Personal\\new\\MyChatApp\\wwwroot\\favicon.ico",

@@ -1,23 +1,26 @@
 using Azure;
 using Azure.AI.OpenAI;
 using Azure.AI.OpenAI.Chat;
+using Azure.AI.OpenAI.Images;
 using Azure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
+using OpenAI.Chat;
+using OpenAI.Images;
+using System; // Added for Environment.GetEnvironmentVariable
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static System.Environment;
-using OpenAI.Chat;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 
+// Register the AzureOpenAIClient as a singleton
 builder.Services.AddSingleton(sp =>
 {
- string endpoint = GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT");
- AzureKeyCredential credential = new(GetEnvironmentVariable("AZURE_OPENAI_KEY"));
+ string endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT");
+ AzureKeyCredential credential = new(Environment.GetEnvironmentVariable("AZURE_OPENAI_KEY"));
  return new AzureOpenAIClient(new Uri(endpoint), credential);
 });
 
@@ -26,7 +29,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
  app.UseExceptionHandler("/Error");
- // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
  app.UseHsts();
 }
 
@@ -38,8 +40,9 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
-app.MapFallbackToFile("Index.cshtml"); // Handle default route
+app.MapFallbackToFile("Index.cshtml");
 
+// Chat endpoint
 app.MapPost("/chat", async (HttpContext context) =>
 {
  string userMessage = await new StreamReader(context.Request.Body).ReadToEndAsync();
@@ -52,7 +55,7 @@ app.MapPost("/chat", async (HttpContext context) =>
  {
      Endpoint = new Uri("https://whoamisearch.search.windows.net"), // Replace with your Azure AI Search endpoint
      IndexName = "profile2", // Replace with your Azure AI Search index name
-     Authentication = DataSourceAuthentication.FromApiKey(GetEnvironmentVariable("SEARCH_KEY")) // Replace with your Azure AI Search admin key
+     Authentication = DataSourceAuthentication.FromApiKey(Environment.GetEnvironmentVariable("SEARCH_KEY")) // Replace with your Azure AI Search admin key
  });
 
  ChatCompletion completion = await chatClient.CompleteChatAsync(
@@ -76,6 +79,34 @@ app.MapPost("/chat", async (HttpContext context) =>
  }
 
  await context.Response.WriteAsync(response);
+});
+
+// Image generation endpoint
+app.MapPost("/generate-image", async (HttpContext context) =>
+{
+ string userPrompt = await new StreamReader(context.Request.Body).ReadToEndAsync();
+
+ var client = context.RequestServices.GetRequiredService<AzureOpenAIClient>();
+ var imageClient = client.GetImageClient("dall-e-3"); // Replace with your desired deployment
+
+ // GenerateImageAsync now directly returns GeneratedImage (or throws an exception)
+ try
+ {
+     GeneratedImage image = await imageClient.GenerateImageAsync(userPrompt, new()
+     {
+         Quality = GeneratedImageQuality.Standard,
+         Size = GeneratedImageSize.W1024xH1024,
+         ResponseFormat = GeneratedImageFormat.Uri
+     });
+
+     await context.Response.WriteAsync($"Image URL: {image.ImageUri}");
+ }
+ catch (Exception ex)
+ {
+     // Handle the exception, e.g., log the error and send an error response
+     Console.WriteLine($"Image generation failed: {ex.Message}");
+     await context.Response.WriteAsync("Image generation failed.");
+ }
 });
 
 app.Run();

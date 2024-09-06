@@ -1,0 +1,56 @@
+﻿@page
+@model ImageModel
+@{
+ ViewData["Title"] = "Image";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>@ViewData["Title"]</title>
+ <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+ <div class="container chat-container">
+     <div class="chat-header">
+         <h1 class="display-4">Generate Image</h1>
+         <p class="lead">Describe the image you want to generate and click the button below.</p>
+     </div>
+
+     <div class="chat-input">
+         <textarea id="imagePrompt" class="form-control" rows="2" placeholder="Describe the image you want to generate..."></textarea>
+         <button class="btn btn-primary" onclick="generateImage()">Generate</button>
+     </div>
+
+     <div id="imageOutput" class="image-output">
+         <img id="generatedImage" src="" alt="Generated Image">
+     </div>
+ </div>
+
+ <script>
+     function generateImage() {
+         var userPrompt = document.getElementById("imagePrompt").value;
+         document.getElementById("imagePrompt").value = "";
+
+         fetch('/generate-image', {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'text/plain'
+             },
+             body: userPrompt
+         })
+             .then(response => response.text())
+             .then(responseText => {
+                 const imageUrl = responseText.split("Image URL: ")[1];
+                 document.getElementById("generatedImage").src = imageUrl;
+             })
+             .catch(error => {
+                 console.error("Error generating image:", error);
+             });
+     }
+ </script>
+</body>
+</html>

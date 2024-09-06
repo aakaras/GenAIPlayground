@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "/iWWAYUN2nR1EW1LIfxM3tA8OBZRXrZHndgsM2x2Sa8=",
+  "Hash": "LAsQBnCSPw8RcLUftO/mNHDXuKAj+XzaeHwqJnjd4GM=",
   "Source": "MyChatApp",
   "BasePath": "_content/MyChatApp",
   "Mode": "Default",
@@ -55,6 +55,25 @@
       "OriginalItemSpec": "F:\\Personal\\new\\MyChatApp\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\MyChatApp.bundle.scp.css"
     },
     {
+      "Identity": "F:\\Personal\\new\\MyChatApp\\wwwroot\\css\\site-old.css",
+      "SourceId": "MyChatApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "F:\\Personal\\new\\MyChatApp\\wwwroot\\",
+      "BasePath": "_content/MyChatApp",
+      "RelativePath": "css/site-old.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\site-old.css"
+    },
+    {
       "Identity": "F:\\Personal\\new\\MyChatApp\\wwwroot\\css\\site.css",
       "SourceId": "MyChatApp",
       "SourceType": "Discovered",
@@ -72,6 +91,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\site.css"
+    },
+    {
+      "Identity": "F:\\Personal\\new\\MyChatApp\\wwwroot\\css\\styles.css",
+      "SourceId": "MyChatApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "F:\\Personal\\new\\MyChatApp\\wwwroot\\",
+      "BasePath": "_content/MyChatApp",
+      "RelativePath": "css/styles.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\styles.css"
     },
     {
       "Identity": "F:\\Personal\\new\\MyChatApp\\wwwroot\\favicon.ico",

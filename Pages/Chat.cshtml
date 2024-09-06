@@ -1,0 +1,72 @@
+﻿@page 
+@model IndexModel
+@{
+ ViewData["Title"] = "Chat with Alison Karas";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>@ViewData["Title"]</title>
+ <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+ <div class="container chat-container">
+     <div class="chat-header">
+         <h1 class="display-4">Chat with Alison Karas</h1>
+         <p class="lead">Ask me anything regarding my work expirence!</p>
+     </div>
+
+     <div id="chatMessages" class="chat-messages">
+         <!-- Chat messages will appear here -->
+     </div>
+
+     <div class="chat-input">
+         <textarea id="chatInput" class="form-control" rows="2" placeholder="Type your message..."></textarea>
+         <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+     </div>
+ </div>
+
+ <script>
+     function sendMessage() {
+         const chatInput = document.getElementById("chatInput");
+         const chatMessages = document.getElementById("chatMessages");
+         const userMessage = chatInput.value.trim(); 
+
+         if (userMessage !== "") {
+             // Clear the input field
+             chatInput.value = "";
+
+             // Append user's message to the chat
+             appendMessage("user", userMessage);
+
+             // Send the message to the server
+             fetch('/chat', { 
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'text/plain'
+                 },
+                 body: userMessage
+             })
+             .then(response => response.text())
+             .then(botResponse => {
+                 // Append the bot's response to the chat
+                 appendMessage("bot", botResponse);
+             });
+         }
+     }
+
+     function appendMessage(type, message) {
+         const chatMessages = document.getElementById("chatMessages");
+         const newMessage = document.createElement("div");
+         newMessage.className = `chat-message ${type}`;
+         newMessage.textContent = message;
+         chatMessages.appendChild(newMessage);
+         chatMessages.scrollTop = chatMessages.scrollHeight; 
+     }
+ </script>
+</body>
+</html>

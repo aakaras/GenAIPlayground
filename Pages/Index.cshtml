@@ -7,52 +7,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"]</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Alison Karas - AI Playground</title>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="text-center">
-            <h1 class="display-4">Chat with Alison Karas</h1>
-        </div>
-
-        <div class="form-group">
-            <textarea id="userInput" class="form-control" rows="5" placeholder="Type your message here..."></textarea>
-        </div>
-        <div class="text-right">
-            <button class="btn btn-primary" onclick="sendMessage()">Send</button>
-            <button class="btn btn-secondary" onclick="clearChat()">Clear</button>
-        </div>
-
-        <div id="chatOutput" class="mt-4 border p-3" style="height: 300px; overflow-y: scroll;">
-        </div>
+ <header>
+     <h1>Welcome to Alison Karas' AI Playground</h1>
+ </header>
+ <main>
+     <section id="about-me">
+         <h2>About Me</h2>
+         <p>Hello! I'm Alison Karas, married since 2004 and a proud father of two boys. This is my personal site that is used to play with Generative AI such as Text and Image generation.</p>
+     </section>
+     <section id="professional-career">
+         <h2>Professional Career</h2>
+         <p>I am passionate about leveraging technology to solve complex problems, improve business processes, and drive digital transformation. My goal is to continue contributing to innovative projects that make a significant impact while mentoring and developing the next generation of IT professionals.</p>
+         <p>Do you want to know anything about my professional career? Head over to the <a href="Chat">Chat page</a> where you can ask anything related to my CV.</p>
+     </section>
+     <section id="image-generation">
+         <h2>Image Generation AI</h2>
+         <p>I'm excited to offer you an image generation AI tool. Feel free to use it! Just go to the <a href="Image">Image page</a> to get started.</p>
+     </section>
+ </main>
+ <footer>
+    <div class="footer-container">
+        <p>&copy; 2024 Alison Karas. All rights reserved.</p>
     </div>
-
-    <script>
-        function sendMessage() {
-            var userInput = document.getElementById("userInput").value;
-            document.getElementById("userInput").value = ""; 
-
-            // Send user input to the server using AJAX (fetch or XMLHttpRequest)
-            fetch('/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain' 
-                },
-                body: userInput
-            })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById("chatOutput").innerHTML += "<div><strong>You:</strong> " + userInput + "</div>";
-                document.getElementById("chatOutput").innerHTML += "<div><strong>Bot:</strong> " + data + "</div>";
-            });
-        }
-
-        function clearChat() {
-            document.getElementById("chatOutput").innerHTML = "";
-        }
-    </script>
+</footer>
 </body>
 </html>
