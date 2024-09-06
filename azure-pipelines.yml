@@ -1,5 +1,5 @@
-trigger:
-- main # Trigger on pushes to the main branch (adjust if needed)
+#trigger:
+#- main # Trigger on pushes to the main branch (adjust if needed)
 
 pool:
   vmImage: 'ubuntu-latest' # Or 'windows-latest' if you prefer
