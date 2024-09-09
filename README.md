@@ -2,25 +2,31 @@
 
 This project demonstrates how to integrate Azure OpenAI services with an ASP.NET Core web application. It includes endpoints for chat completion and image generation using Azure OpenAI.
 
+# Azure OpenAI Integration with ASP.NET Core
+
+This project demonstrates how to integrate Azure OpenAI services with an ASP.NET Core web application. It includes a combined endpoint for chat completion and image generation using Azure OpenAI.
+
 ## Prerequisites
 
-- [.NET 6.0 SDK]
+- [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
 - Azure subscription with OpenAI and Azure AI Search services enabled
-- Environment variables set for [`AZURE_OPENAI_ENDPOINT`] [`AZURE_OPENAI_KEY`] [`SEARCH_KEY`]
+- Environment variables set for `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_KEY`, `SEARCH_KEY`, `AZURE_SEARCH_ENDPOINT`, and `AZURE_SEARCH_INDEX_NAME`
 
 ## Setup
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/aakaras/akaiplayground.git
+   git clone <repository-url>
    cd <repository-directory>
    ```
 
 2. Set the required environment variables:
    ```sh
-   setx AZURE_OPENAI_ENDPOINT "<your-azure-openai-endpoint>"
-   setx AZURE_OPENAI_KEY "<your-azure-openai-key>"
-   setx SEARCH_KEY "<your-azure-ai-search-key>"
+    setx AZURE_OPENAI_ENDPOINT "<your-azure-openai-endpoint>"
+    setx AZURE_OPENAI_KEY "<your-azure-openai-key>"
+    setx SEARCH_KEY "<your-azure-ai-search-key>"
+    setx AZURE_SEARCH_ENDPOINT "<your-azure-search-endpoint>"
+    setx AZURE_SEARCH_INDEX_NAME "<your-azure-search-index-name>"
    ```
 
 3. Restore the dependencies and run the application:
@@ -67,28 +73,35 @@ Program.cs
 
 - **Chat Endpoint:**
   ```csharp
-  app.MapPost("/chat", async (HttpContext context) =>
-  {
-      string userMessage = await new StreamReader(context.Request.Body).ReadToEndAsync();
-      var client = context.RequestServices.GetRequiredService<AzureOpenAIClient>();
-      var chatClient = client.GetChatClient("gpt-4o-mini-2024-07-08");
+    app.MapPost("/chat", async (HttpContext context) =>
+    {
+        string userMessage = await new StreamReader(context.Request.Body).ReadToEndAsync();
 
-      ChatCompletionOptions options = new();
-      options.AddDataSource(new AzureSearchChatDataSource()
-      {
-          Endpoint = new Uri("https://whoamisearch.search.windows.net"),
-          IndexName = "<your_profiel_index>",
-          Authentication = DataSourceAuthentication.FromApiKey(Environment.GetEnvironmentVariable("SEARCH_KEY"))
-      });
+        var client = context.RequestServices.GetRequiredService<AzureOpenAIClient>();
+        var chatClient = client.GetChatClient("gpt-4o-mini-2024-07-08"); // Replace with your desired deployment
 
-      ChatCompletion completion = await chatClient.CompleteChatAsync(
-          new List<ChatMessage> { new UserChatMessage(userMessage) },
-          options
-      );
+        ChatCompletionOptions options = new();
+        string searchEndpoint = Environment.GetEnvironmentVariable("AZURE_SEARCH_ENDPOINT");
+        options.AddDataSource(new AzureSearchChatDataSource()
+        {
+            Endpoint = new Uri(searchEndpoint), // Set the endpoint property
+            IndexName = Environment.GetEnvironmentVariable("AZURE_SEARCH_INDEX_NAME"), // Replace with your Azure AI Search index name
+            Authentication = DataSourceAuthentication.FromApiKey(Environment.GetEnvironmentVariable("SEARCH_KEY")) // Replace with your Azure AI Search admin key
+        });
 
-      string response = completion.Content[0].Text;
-      await context.Response.WriteAsync(response);
-  });
+        ChatCompletion completion = await chatClient.CompleteChatAsync(
+            new List<ChatMessage>()
+            {
+                new UserChatMessage(userMessage)
+            },
+            options
+        );
+
+    AzureChatMessageContext onYourDataContext = completion.GetAzureMessageContext();
+
+    string response = completion.Content[0].Text;
+    await context.Response.WriteAsync(response);
+    });
   ```
 
 - **Image Generation Endpoint:**

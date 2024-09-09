@@ -45,26 +45,27 @@ app.MapFallbackToFile("Index.cshtml");
 // Chat endpoint
 app.MapPost("/chat", async (HttpContext context) =>
 {
- string userMessage = await new StreamReader(context.Request.Body).ReadToEndAsync();
+    string userMessage = await new StreamReader(context.Request.Body).ReadToEndAsync();
 
- var client = context.RequestServices.GetRequiredService<AzureOpenAIClient>();
- var chatClient = client.GetChatClient("gpt-4o-mini-2024-07-08"); // Replace with your desired deployment
+    var client = context.RequestServices.GetRequiredService<AzureOpenAIClient>();
+    var chatClient = client.GetChatClient("gpt-4o-mini-2024-07-08"); // Replace with your desired deployment
 
- ChatCompletionOptions options = new();
- options.AddDataSource(new AzureSearchChatDataSource()
- {
-     Endpoint = new Uri("https://whoamisearch.search.windows.net"), // Replace with your Azure AI Search endpoint
-     IndexName = "profile2", // Replace with your Azure AI Search index name
-     Authentication = DataSourceAuthentication.FromApiKey(Environment.GetEnvironmentVariable("SEARCH_KEY")) // Replace with your Azure AI Search admin key
- });
+    ChatCompletionOptions options = new();
+    string searchEndpoint = Environment.GetEnvironmentVariable("AZURE_SEARCH_ENDPOINT");
+    options.AddDataSource(new AzureSearchChatDataSource()
+    {
+        Endpoint = new Uri(searchEndpoint), // Set the endpoint property
+        IndexName = Environment.GetEnvironmentVariable("AZURE_SEARCH_INDEX_NAME"), // Replace with your Azure AI Search index name
+        Authentication = DataSourceAuthentication.FromApiKey(Environment.GetEnvironmentVariable("SEARCH_KEY")) // Replace with your Azure AI Search admin key
+    });
 
- ChatCompletion completion = await chatClient.CompleteChatAsync(
-     new List<ChatMessage>()
-     {
-         new UserChatMessage(userMessage)
-     },
-     options
- );
+    ChatCompletion completion = await chatClient.CompleteChatAsync(
+        new List<ChatMessage>()
+        {
+            new UserChatMessage(userMessage)
+        },
+        options
+    );
 
  AzureChatMessageContext onYourDataContext = completion.GetAzureMessageContext();
 
