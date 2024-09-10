@@ -6,6 +6,10 @@ This project demonstrates how to integrate Azure OpenAI services with an ASP.NET
 
 This project demonstrates how to integrate Azure OpenAI services with an ASP.NET Core web application. It includes a combined endpoint for chat completion and image generation using Azure OpenAI.
 
+## Azure Resources Used in MyChatApp Project
+
+![Azure Resources](./images/whoami.svg)
+
 ## Prerequisites
 
 - [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
