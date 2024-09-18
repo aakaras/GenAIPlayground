@@ -8,20 +8,45 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using OpenAI.Chat;
 using OpenAI.Images;
-using System; // Added for Environment.GetEnvironmentVariable
+using DotNetEnv;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Azure.Security.KeyVault.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+ serverOptions.ListenAnyIP(5062); // Listen on any IP address on port 5062
+});
+
+// Key Vault Configuration
+string keyVaultName = "kv-genai-demo-swd"; // Your Key Vault name
+string endpointSecretName = "AZURE-OPENAI-ENDPOINT"; // Azure OpenAI Endpoint
+string apiKeySecretName = "AZURE-OPENAI-KEY"; //New secret for Azure OpenAI
+string searchEndpointSecretName = "AZURE-SEARCH-ENDPOINT"; //Azure Search Endpoint
+string searchIndexNameSecretName = "AZURE-SEARCH-INDEX-NAME"; // New secret for index name
+string searchKeySecretName = "SEARCH-KEY"; // New secret for search key
+
+// Get secrets from Key Vault 
+var credential = new DefaultAzureCredential();
+var client = new SecretClient(new Uri($"https://{keyVaultName}.vault.azure.net/"), credential);
+
+string endpoint = (await client.GetSecretAsync(endpointSecretName)).Value.Value; // Get endpoint from Key Vault
+string apiKey = (await client.GetSecretAsync(apiKeySecretName)).Value.Value; // Get API key from Key Vault
+string searchEndpoint = (await client.GetSecretAsync(searchEndpointSecretName)).Value.Value; // Get search endpoint from Key Vault
+string searchIndexName = (await client.GetSecretAsync(searchIndexNameSecretName)).Value.Value; // Get index name from Key Vault
+string searchKey = (await client.GetSecretAsync(searchKeySecretName)).Value.Value;           // Get search key from Key Vault
+
+
+
 // Register the AzureOpenAIClient as a singleton
 builder.Services.AddSingleton(sp =>
 {
- string endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT");
- AzureKeyCredential credential = new(Environment.GetEnvironmentVariable("AZURE_OPENAI_KEY"));
- return new AzureOpenAIClient(new Uri(endpoint), credential);
+ AzureKeyCredential azureKeyCredential = new(apiKey);
+ return new AzureOpenAIClient(new Uri(endpoint), azureKeyCredential);
 });
 
 var app = builder.Build();
@@ -32,7 +57,7 @@ if (!app.Environment.IsDevelopment())
  app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -48,16 +73,15 @@ app.MapPost("/chat", async (HttpContext context) =>
     string userMessage = await new StreamReader(context.Request.Body).ReadToEndAsync();
 
     var client = context.RequestServices.GetRequiredService<AzureOpenAIClient>();
-    var chatClient = client.GetChatClient("gpt-4o-mini-2024-07-08"); // Replace with your desired deployment
-
-    ChatCompletionOptions options = new();
-    string searchEndpoint = Environment.GetEnvironmentVariable("AZURE_SEARCH_ENDPOINT");
-    options.AddDataSource(new AzureSearchChatDataSource()
-    {
-        Endpoint = new Uri(searchEndpoint), // Set the endpoint property
-        IndexName = Environment.GetEnvironmentVariable("AZURE_SEARCH_INDEX_NAME"), // Replace with your Azure AI Search index name
-        Authentication = DataSourceAuthentication.FromApiKey(Environment.GetEnvironmentVariable("SEARCH_KEY")) // Replace with your Azure AI Search admin key
-    });
+    var chatClient = client.GetChatClient("gpt-4o-mini-deployment"); // Replace with your desired deployment
+    
+ ChatCompletionOptions options = new();
+ options.AddDataSource(new AzureSearchChatDataSource()
+ {
+     Endpoint = new Uri(searchEndpoint),
+     IndexName = searchIndexName, // Use index name from Key Vault
+     Authentication = DataSourceAuthentication.FromApiKey(searchKey) // Use search key from Key Vault
+ });
 
     ChatCompletion completion = await chatClient.CompleteChatAsync(
         new List<ChatMessage>()

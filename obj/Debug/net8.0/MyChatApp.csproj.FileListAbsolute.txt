@@ -43,3 +43,6 @@ F:\Personal\new\MyChatApp\obj\Debug\net8.0\MyChatApp.pdb
 F:\Personal\new\MyChatApp\obj\Debug\net8.0\MyChatApp.genruntimeconfig.cache
 F:\Personal\new\MyChatApp\obj\Debug\net8.0\ref\MyChatApp.dll
 F:\Personal\new\MyChatApp\obj\Debug\net8.0\MyChatApp.sourcelink.json
+F:\Personal\new\MyChatApp\bin\Debug\net8.0\DotNetEnv.dll
+F:\Personal\new\MyChatApp\bin\Debug\net8.0\Sprache.dll
+F:\Personal\new\MyChatApp\bin\Debug\net8.0\Azure.Security.KeyVault.Secrets.dll

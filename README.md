@@ -14,7 +14,7 @@ This project demonstrates how to integrate Azure OpenAI services with an ASP.NET
 
 - [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
 - Azure subscription with OpenAI and Azure AI Search services enabled
-- Environment variables set for `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_KEY`, `SEARCH_KEY`, `AZURE_SEARCH_ENDPOINT`, and `AZURE_SEARCH_INDEX_NAME`
+- Environment variables set for `AZURE-OPENAI-ENDPOINT`, `AZURE-OPENAI-KEY`, `SEARCH-KEY`, `AZURE_SEARCH_ENDPOINT`, and `AZURE_SEARCH_INDEX_NAME`
 
 ## Setup
 
@@ -26,9 +26,9 @@ This project demonstrates how to integrate Azure OpenAI services with an ASP.NET
 
 2. Set the required environment variables:
    ```sh
-    setx AZURE_OPENAI_ENDPOINT "<your-azure-openai-endpoint>"
-    setx AZURE_OPENAI_KEY "<your-azure-openai-key>"
-    setx SEARCH_KEY "<your-azure-ai-search-key>"
+    setx AZURE-OPENAI-ENDPOINT "<your-azure-openai-endpoint>"
+    setx AZURE-OPENAI-KEY "<your-azure-openai-key>"
+    setx SEARCH-KEY "<your-azure-ai-search-key>"
     setx AZURE_SEARCH_ENDPOINT "<your-azure-search-endpoint>"
     setx AZURE_SEARCH_INDEX_NAME "<your-azure-search-index-name>"
    ```
@@ -69,8 +69,8 @@ Program.cs
   ```csharp
   builder.Services.AddSingleton(sp =>
   {
-      string endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT");
-      AzureKeyCredential credential = new(Environment.GetEnvironmentVariable("AZURE_OPENAI_KEY"));
+      string endpoint = Environment.GetEnvironmentVariable("AZURE-OPENAI-ENDPOINT");
+      AzureKeyCredential credential = new(Environment.GetEnvironmentVariable("AZURE-OPENAI-KEY"));
       return new AzureOpenAIClient(new Uri(endpoint), credential);
   });
   ```
@@ -90,7 +90,7 @@ Program.cs
         {
             Endpoint = new Uri(searchEndpoint), // Set the endpoint property
             IndexName = Environment.GetEnvironmentVariable("AZURE_SEARCH_INDEX_NAME"), // Replace with your Azure AI Search index name
-            Authentication = DataSourceAuthentication.FromApiKey(Environment.GetEnvironmentVariable("SEARCH_KEY")) // Replace with your Azure AI Search admin key
+            Authentication = DataSourceAuthentication.FromApiKey(Environment.GetEnvironmentVariable("SEARCH-KEY")) // Replace with your Azure AI Search admin key
         });
 
         ChatCompletion completion = await chatClient.CompleteChatAsync(
