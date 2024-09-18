@@ -1,0 +1,40 @@
+#trigger:
+#- main # Trigger on pushes to the main branch (adjust if needed)
+
+pool:
+  vmImage: 'ubuntu-latest' # Or 'windows-latest' if you prefer
+
+variables:
+  azureSubscription: 'SWD-LA-SHARED' # Name in Azure DevOps
+  webAppName: 'rg-genai-demo-ak' 
+  publishOutputFolder: '$(Build.ArtifactStagingDirectory)/publish'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x' # Or your desired .NET version
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore'
+  inputs:
+    command: 'restore'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build'
+  inputs:
+    command: 'build'
+    arguments: '--no-restore'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish'
+  inputs:
+    command: 'publish'
+    arguments: '-c Release -o $(publishOutputFolder)'
+
+- task: AzureWebApp@1
+  displayName: 'Azure Web App Deploy: $(webAppName)'
+  inputs:
+    azureSubscription: $(azureSubscription)
+    appName: $(webAppName)
+    package: $(publishOutputFolder)/**/*.zip
