@@ -1,12 +1,10 @@
-#trigger:
-#- main # Trigger on pushes to the main branch (adjust if needed)
 
 pool:
   vmImage: 'ubuntu-latest' # Or 'windows-latest' if you prefer
 
 variables:
-  azureSubscription: 'devops-presentation' # Name in Azure DevOps
-  webAppName: 'whoamai-ak' 
+  azureSubscription: '<NAME_OF_YOU_ADO_SERVICE_CONNECTION>' # Name in Azure DevOps
+  webAppName: '<NAME_OF_YOUR_WEB_APPLICATION>' 
   publishOutputFolder: '$(Build.ArtifactStagingDirectory)/publish'
 
 steps:
