@@ -8,13 +8,22 @@ This project demonstrates how to integrate Azure OpenAI services with an ASP.NET
 
 ## Azure Resources Used in MyChatApp Project
 
-![Azure Resources](./images/whoami.svg)
+![Azure Resources](./images/rg-genai-demo.svg)
 
 ## Prerequisites
 
-- [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - Azure subscription with OpenAI and Azure AI Search services enabled
-- Environment variables set for `AZURE-OPENAI-ENDPOINT`, `AZURE-OPENAI-KEY`, `SEARCH-KEY`, `AZURE_SEARCH_ENDPOINT`, and `AZURE_SEARCH_INDEX_NAME`
+- In case you deploy you infrastructure using the Terraform available [HERE](https://github.com/aakaras/GenAIAzureInfra) the key vault configuration is handled for you.
+
+#### Key Vault Configuration
+
+Ensure your Azure Key Vault contains the following secrets:
+- `AZURE-OPENAI-ENDPOINT`: Your Azure OpenAI Endpoint
+- `AZURE-OPENAI-KEY`: Your Azure OpenAI API key
+- `AZURE-SEARCH-ENDPOINT`: Your Azure Search Endpoint
+- `AZURE-SEARCH-INDEX-NAME`: Your Azure Search Index name
+- `SEARCH-KEY`: Your Azure Search key
 
 ## Setup
 
@@ -24,16 +33,7 @@ This project demonstrates how to integrate Azure OpenAI services with an ASP.NET
    cd <repository-directory>
    ```
 
-2. Set the required environment variables:
-   ```sh
-    setx AZURE-OPENAI-ENDPOINT "<your-azure-openai-endpoint>"
-    setx AZURE-OPENAI-KEY "<your-azure-openai-key>"
-    setx SEARCH-KEY "<your-azure-ai-search-key>"
-    setx AZURE_SEARCH_ENDPOINT "<your-azure-search-endpoint>"
-    setx AZURE_SEARCH_INDEX_NAME "<your-azure-search-index-name>"
-   ```
-
-3. Restore the dependencies and run the application:
+2. Restore the dependencies and run the application:
    ```sh
    dotnet restore
    dotnet run
@@ -69,28 +69,34 @@ Program.cs
   ```csharp
   builder.Services.AddSingleton(sp =>
   {
-      string endpoint = Environment.GetEnvironmentVariable("AZURE-OPENAI-ENDPOINT");
-      AzureKeyCredential credential = new(Environment.GetEnvironmentVariable("AZURE-OPENAI-KEY"));
-      return new AzureOpenAIClient(new Uri(endpoint), credential);
-  });
+      AzureKeyCredential azureKeyCredential = new(apiKey);
+      return new AzureOpenAIClient(new Uri(endpoint), azureKeyCredential);
+  }
   ```
 
 - **Chat Endpoint:**
+
+The chat endpoint is available at /chat. It accepts a POST request with the user's message in the request body and returns the chat completion response.
+
+Example usage:
+```bash
+curl -X POST http://localhost:5062/chat -d "Your message here"
+```
+
   ```csharp
     app.MapPost("/chat", async (HttpContext context) =>
-    {
-        string userMessage = await new StreamReader(context.Request.Body).ReadToEndAsync();
+        {
+            string userMessage = await new StreamReader(context.Request.Body).ReadToEndAsync();
 
-        var client = context.RequestServices.GetRequiredService<AzureOpenAIClient>();
-        var chatClient = client.GetChatClient("gpt-4o-mini-2024-07-08"); // Replace with your desired deployment
-
+            var client = context.RequestServices.GetRequiredService<AzureOpenAIClient>();
+            var chatClient = client.GetChatClient("gpt-4o-mini-deployment"); // Replace with your desired deployment
+            
         ChatCompletionOptions options = new();
-        string searchEndpoint = Environment.GetEnvironmentVariable("AZURE_SEARCH_ENDPOINT");
         options.AddDataSource(new AzureSearchChatDataSource()
         {
-            Endpoint = new Uri(searchEndpoint), // Set the endpoint property
-            IndexName = Environment.GetEnvironmentVariable("AZURE_SEARCH_INDEX_NAME"), // Replace with your Azure AI Search index name
-            Authentication = DataSourceAuthentication.FromApiKey(Environment.GetEnvironmentVariable("SEARCH-KEY")) // Replace with your Azure AI Search admin key
+            Endpoint = new Uri(searchEndpoint),
+            IndexName = searchIndexName, // Use index name from Key Vault
+            Authentication = DataSourceAuthentication.FromApiKey(searchKey) // Use search key from Key Vault
         });
 
         ChatCompletion completion = await chatClient.CompleteChatAsync(
@@ -101,38 +107,59 @@ Program.cs
             options
         );
 
-    AzureChatMessageContext onYourDataContext = completion.GetAzureMessageContext();
+        AzureChatMessageContext onYourDataContext = completion.GetAzureMessageContext();
 
-    string response = completion.Content[0].Text;
-    await context.Response.WriteAsync(response);
+        string response = completion.Content[0].Text;
+        if (onYourDataContext?.Intent is not null)
+        {
+            //response += $"\nIntent: {onYourDataContext.Intent}";
+        }
+        foreach (AzureChatCitation citation in onYourDataContext?.Citations ?? new List<AzureChatCitation>())
+        {
+            //response += $"\nCitation: {citation.Content}";
+        }
+
+        await context.Response.WriteAsync(response);
     });
+    
   ```
 
 - **Image Generation Endpoint:**
+
+The image generation endpoint is available at /generate-image. It accepts a POST request with the user's prompt in the request body and returns the generated image URL.
+
+Example usage:
+```bash
+curl -X POST http://localhost:5062/generate-image -d "Your image prompt here"
+```
+
   ```csharp
-  app.MapPost("/generate-image", async (HttpContext context) =>
-  {
-      string userPrompt = await new StreamReader(context.Request.Body).ReadToEndAsync();
-      var client = context.RequestServices.GetRequiredService<AzureOpenAIClient>();
-      var imageClient = client.GetImageClient("dall-e-3");
+    app.MapPost("/generate-image", async (HttpContext context) =>
+        {
+        string userPrompt = await new StreamReader(context.Request.Body).ReadToEndAsync();
 
-      try
-      {
-          GeneratedImage image = await imageClient.GenerateImageAsync(userPrompt, new()
-          {
-              Quality = GeneratedImageQuality.Standard,
-              Size = GeneratedImageSize.W1024xH1024,
-              ResponseFormat = GeneratedImageFormat.Uri
-          });
+        var client = context.RequestServices.GetRequiredService<AzureOpenAIClient>();
+        var imageClient = client.GetImageClient("dall-e-3"); // Replace with your desired deployment
 
-          await context.Response.WriteAsync($"Image URL: {image.ImageUri}");
-      }
-      catch (Exception ex)
-      {
-          Console.WriteLine($"Image generation failed: {ex.Message}");
-          await context.Response.WriteAsync("Image generation failed.");
-      }
-  });
+        // GenerateImageAsync now directly returns GeneratedImage (or throws an exception)
+        try
+        {
+        GeneratedImage image = await imageClient.GenerateImageAsync(userPrompt, new()
+        {
+            Quality = GeneratedImageQuality.Standard,
+            Size = GeneratedImageSize.W1024xH1024,
+            ResponseFormat = GeneratedImageFormat.Uri
+        });
+
+        await context.Response.WriteAsync($"Image URL: {image.ImageUri}");
+        }
+        catch (Exception ex)
+        {
+            // Handle the exception, e.g., log the error and send an error response
+            Console.WriteLine($"Image generation failed: {ex.Message}");
+            await context.Response.WriteAsync("Image generation failed.");
+        }
+    });
   ```
 
 ## License

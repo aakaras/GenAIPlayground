@@ -23,7 +23,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 });
 
 // Key Vault Configuration
-string keyVaultName = "kv-genai-demo-swd"; // Your Key Vault name
+string keyVaultName = "<YOUR-KEY-VAUL-NAME>"; // Your Key Vault name
 string endpointSecretName = "AZURE-OPENAI-ENDPOINT"; // Azure OpenAI Endpoint
 string apiKeySecretName = "AZURE-OPENAI-KEY"; //New secret for Azure OpenAI
 string searchEndpointSecretName = "AZURE-SEARCH-ENDPOINT"; //Azure Search Endpoint
